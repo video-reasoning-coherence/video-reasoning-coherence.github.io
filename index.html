@@ -45,82 +45,7 @@
       transform: translateY(-2px);
     }
 
-    /* ===== Hint Comparison Slider ===== */
-    .hint-slider-wrap {
-      position: relative;
-      max-width: 1100px;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-    .hint-slider-track {
-      display: flex;
-      transition: transform .4s cubic-bezier(.25,.8,.25,1);
-    }
-    .hint-slide {
-      min-width: 100%;
-      padding: 0 1rem;
-      box-sizing: border-box;
-    }
-    .hint-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      background: var(--pri);
-      color: #fff;
-      border: none;
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      font-size: 1.1rem;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,.15);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .hint-nav:hover { background: #3a4fba; }
-    .hint-nav.prev { left: 6px; }
-    .hint-nav.next { right: 6px; }
-    .hint-dots {
-      display: flex; justify-content: center; gap: 8px; margin-top: 1rem;
-    }
-    .hint-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: #ccc; border: none; cursor: pointer; padding: 0;
-    }
-    .hint-dot.active { background: var(--pri); }
-
-    /* Video Card */
-    .vid-card {
-      border: 1px solid rgba(0,0,0,.08);
-      border-radius: 10px;
-      overflow: hidden;
-      background: #fff;
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .vid-card-header {
-      background: var(--pri);
-      color: #fff;
-      text-align: center;
-      padding: .45rem .5rem;
-      font-weight: 700;
-      font-size: .92rem;
-    }
-    .vid-card-media {
-      aspect-ratio: 16/9;
-      background: #f5f5f5;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .vid-card-media video {
-      width: 100%; height: 100%; object-fit: cover;
-      transform: scale(1.15);
-    }
-    .vid-card-body {
-      padding: .7rem .85rem; font-size: .88rem; flex: 1;
-    }
-    /* ========== Hint Tab  ========== */
+    /* ===== Hint Tab ========== */
     .hint-cat-tab {
       cursor: pointer;
       padding: .5rem 1.2rem;
@@ -142,10 +67,52 @@
       box-shadow: 0 2px 10px rgba(100,181,246,.3);
     }
 
-    /* ========== Hint Panel  ========== */
+    /* ===== Hint Panel ===== */
     .hint-panel { display: none; }
     .hint-panel.is-active { display: block; }
 
+    /* Video Card */
+    .vid-card {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .vid-card-header {
+      background: var(--pri);
+      color: #fff;
+      text-align: center;
+      padding: .45rem .5rem;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+    /* FIX: Added styles for text-hint and visual-hint headers */
+    .vid-card-header.text-hint {
+      background: #2563eb;
+    }
+    .vid-card-header.visual-hint {
+      background: #4fc3f7;
+    }
+    .vid-card-media {
+      aspect-ratio: 16/9;
+      background: #f5f5f5;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .vid-card-media video {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: scale(1.15);
+    }
+    .vid-card-media img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .vid-card-body {
+      padding: .7rem .85rem; font-size: .88rem; flex: 1;
+    }
 
     /* ===== Category Tabs (Visualization) ===== */
     .rv-filterbar {
@@ -183,7 +150,8 @@
       display: inline-block; padding: .15rem .55rem; border-radius: 6px;
       font-size: .78rem; font-weight: 700; color: #fff; margin-bottom: .3rem;
     }
-    .model-badge.veo3.1  { background: #7c3aed; }
+    /* FIX: Removed invalid .veo3.1, using just .veo3 */
+    .model-badge.veo3  { background: #7c3aed; }
     .model-badge.sora2 { background: #2563eb; }
     .model-badge.kling { background: #059669; }
 
@@ -228,14 +196,6 @@
       border: 1px solid rgba(0,0,0,.06); margin-top: .4rem;
       max-height: 12rem; overflow: auto;
     }
-
-    /* ===== Benchmark Slider ===== */
-    .bench-slider-wrap {
-      position: relative; max-width: 750px; margin: 1.5rem auto; overflow: hidden;
-    }
-    .bench-slider-track { display: flex; transition: transform .4s ease; }
-    .bench-slide { min-width: 100%; display: flex; align-items: center; justify-content: center; }
-    .bench-slide img { max-width: 90%; border-radius: 10px; box-shadow: var(--card-shadow); }
   </style>
 </head>
 
@@ -272,7 +232,6 @@
         Evaluating Reasoning Coherence of Video Generation Models
       </h2>
 
-      <!-- Authors (replace with real names) -->
       <div class="is-size-5" style="margin-bottom:.5rem;">
         <span><a href="#">Author A*</a><sup style="color:#6fbf73">1</sup>,</span>
         <span><a href="#">Author B*</a><sup style="color:#ed4b82">2</sup>,</span>
@@ -283,7 +242,6 @@
         <sup style="color:#ed4b82">2</sup>Institution B
       </div>
 
-      <!-- Links -->
       <div class="publication-links">
         <a href="#" class="button is-rounded is-dark">
           <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
@@ -314,7 +272,6 @@
 <section class="section">
   <div class="container is-max-desktop">
 
-    <!-- 3 Model Video Cards -->
     <div style="margin-bottom:2rem;">
       <p class="has-text-centered is-size-5 has-text-weight-bold" style="margin-bottom:.6rem;">
         Example: Apple Falling — Physics-based Reasoning
@@ -324,7 +281,6 @@
       </p>
 
       <div class="columns is-variable is-3">
-        <!-- Veo-3 -->
         <div class="column is-4">
           <div class="vid-card">
             <div class="vid-card-header">Veo-3</div>
@@ -333,7 +289,6 @@
             </div>
           </div>
         </div>
-        <!-- Cosmos -->
         <div class="column is-4">
           <div class="vid-card">
             <div class="vid-card-header">Cosmos</div>
@@ -342,7 +297,6 @@
             </div>
           </div>
         </div>
-        <!-- Kling -->
         <div class="column is-4">
           <div class="vid-card">
             <div class="vid-card-header">Kling</div>
@@ -354,10 +308,9 @@
       </div>
     </div>
 
-    <!-- 1.2 Reasoning Coherence explanation box -->
     <div class="rc-box">
-      <b>Reasoning Coherence</b> is the extent to which generated video events maintain consistent and plausible 
-      cause-and-effect relationships over time — spanning long-horizon dependencies, interaction reasoning, and the fidelity of intermediate transitions. 
+      <b>Reasoning Coherence</b> is the extent to which generated video events maintain consistent and plausible
+      cause-and-effect relationships over time — spanning long-horizon dependencies, interaction reasoning, and the fidelity of intermediate transitions.
       In other words, it's not about whether the video looks good, but whether what happens in the video is causally consistent across frames.
     </div>
   </div>
@@ -381,7 +334,6 @@
       Click each category to compare how different hints affect model outputs.
     </p>
 
-    <!-- ========== 新增！！！ 5个分类按钮 ========== -->
     <div style="display:flex; justify-content:center; gap:.6rem; flex-wrap:wrap; margin-bottom:2rem;">
       <button class="hint-cat-tab is-active" data-idx="0">Embodied Reasoning</button>
       <button class="hint-cat-tab" data-idx="1">4D Dynamics Reasoning</button>
@@ -390,7 +342,7 @@
       <button class="hint-cat-tab" data-idx="4">Visual Detail Reasoning</button>
     </div>
 
-    <!-- ========== 新增！！！ Panel 0: Embodied Reasoning ========== -->
+    <!-- Panel 0: Embodied Reasoning -->
     <div class="hint-panel is-active" data-idx="0">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
         Embodied Reasoning
@@ -437,7 +389,8 @@
         </div>
       </div>
     </div>
-    <!-- ========== 新增！！！ Panel 1: 4D ========== -->
+
+    <!-- Panel 1: 4D Dynamics -->
     <div class="hint-panel" data-idx="1">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
         4D dynamics Reasoning
@@ -484,7 +437,8 @@
         </div>
       </div>
     </div>
-    <!-- ========== Panel 2: Object Counting ========== -->
+
+    <!-- Panel 2: Object Counting -->
     <div class="hint-panel" data-idx="2">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
         Object Counting Reasoning
@@ -531,7 +485,8 @@
         </div>
       </div>
     </div>
-    <!-- ========== Panel 3: Visual Trace ========== -->
+
+    <!-- Panel 3: Visual Trace -->
     <div class="hint-panel" data-idx="3">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
         Visual Trace Reasoning
@@ -578,7 +533,8 @@
         </div>
       </div>
     </div>
-    <!-- ========== Panel 4: Visual Detail ========== -->
+
+    <!-- Panel 4: Visual Detail -->
     <div class="hint-panel" data-idx="4">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
         Visual Detail Reasoning
@@ -625,7 +581,7 @@
         </div>
       </div>
     </div>
-    <!-- ========== 新增！！！ 底部总结语 ========== -->
+
     <p class="has-text-centered" style="margin-top:2rem; font-size:1.1rem; color:#333; font-weight:600;">
       Hints can significantly influence model reasoning performance — both positively and negatively.
     </p>
@@ -633,8 +589,7 @@
   </div>
 </section>
 
-
-<!-- ========== 新增！！！ Tab切换脚本 ========== -->
+<!-- Hint Tab Script -->
 <script>
 (function(){
   const tabs = document.querySelectorAll('.hint-cat-tab');
@@ -651,36 +606,14 @@
 })();
 </script>
 
-<!-- Hint Slider Script -->
-<script>
-(function(){
-  let cur = 0;
-  const track = document.getElementById('hintTrack');
-  const slides = track.querySelectorAll('.hint-slide');
-  const dotsWrap = document.getElementById('hintDots');
-  const total = slides.length;
-
-  // build dots
-  for(let i=0;i<total;i++){
-    const d = document.createElement('button');
-    d.className = 'hint-dot' + (i===0?' active':'');
-    d.onclick = ()=> slideTo(i);
-    dotsWrap.appendChild(d);
-  }
-  function slideTo(i){
-    cur = Math.max(0, Math.min(i, total-1));
-    track.style.transform = `translateX(-${cur*100}%)`;
-    dotsWrap.querySelectorAll('.hint-dot').forEach((d,j)=> d.classList.toggle('active', j===cur));
-  }
-  window.hintGo = function(dir){ slideTo(cur+dir); };
-})();
-</script>
+<!-- FIX: Removed orphaned hint slider script (hintTrack/hintDots no longer exist) -->
 
 
 <!-- ====================================================== -->
 <!-- ========= SECTION 3: MME-CoF-Pro BENCHMARK =========== -->
 <!-- ====================================================== -->
-section class="hero is-light is-small">
+<!-- FIX: Added missing '<' at the start of this section tag -->
+<section class="hero is-light is-small">
   <div class="hero-body has-text-centered">
     <h1 class="title is-2 mathvista">MME-CoF-Pro Benchmark</h1>
   </div>
@@ -689,7 +622,6 @@ section class="hero is-light is-small">
 <section class="section">
   <div class="container is-max-desktop">
 
-    <!-- 介绍文字 -->
     <div class="content has-text-justified" style="margin-bottom:2rem; max-width:860px; margin-left:auto; margin-right:auto;">
       <p>
         <b>MME-CoF-Pro</b> extends the original MME-CoF benchmark with a focus on
@@ -702,9 +634,8 @@ section class="hero is-light is-small">
       </p>
     </div>
 
-    <!-- 新增！！！ 图表滑动器 -->
+    <!-- Benchmark Image Slider -->
     <div style="position:relative; max-width:750px; margin:0 auto; overflow:hidden;">
-      <!-- 左右箭头 -->
       <button onclick="benchGo(-1)" style="position:absolute; top:50%; left:6px; transform:translateY(-50%); z-index:10; background:var(--pri); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:1.1rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center;">
         <i class="fas fa-chevron-left"></i>
       </button>
@@ -712,27 +643,26 @@ section class="hero is-light is-small">
         <i class="fas fa-chevron-right"></i>
       </button>
 
-      <!-- 图片轨道 -->
+      <!-- FIX: Updated image paths from static/images/benchmark/ to static/images/videos/benchmark/ -->
       <div id="benchTrack" style="display:flex; transition:transform .4s ease;">
         <div style="min-width:100%; display:flex; align-items:center; justify-content:center; padding:1rem;">
-          <img src="static/images/benchmark/fig1.png" alt="Figure 1" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
+          <img src="static/images/videos/benchmark/fig1.png" alt="Figure 1" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
         </div>
         <div style="min-width:100%; display:flex; align-items:center; justify-content:center; padding:1rem;">
-          <img src="static/images/benchmark/fig2.png" alt="Figure 2" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
+          <img src="static/images/videos/benchmark/fig2.png" alt="Figure 2" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
         </div>
         <div style="min-width:100%; display:flex; align-items:center; justify-content:center; padding:1rem;">
-          <img src="static/images/benchmark/fig3.png" alt="Figure 3" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
+          <img src="static/images/videos/benchmark/fig3.png" alt="Figure 3" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
         </div>
       </div>
 
-      <!-- 圆点 -->
       <div id="benchDots" style="display:flex; justify-content:center; gap:8px; margin-top:.8rem;"></div>
     </div>
 
   </div>
 </section>
 
-<!-- 新增！！！ 图表滑动脚本 -->
+<!-- Benchmark Slider Script -->
 <script>
 (function(){
   let cur = 0;
@@ -767,7 +697,6 @@ section class="hero is-light is-small">
 <section class="section">
   <div class="container">
 
-    <!-- Category Tabs -->
     <div class="rv-filterbar">
       <div class="rv-tabs" id="vizTabs">
         <button class="rv-tab is-active" data-cat="visual-detail">Visual Detail</button>
@@ -785,19 +714,13 @@ section class="hero is-light is-small">
       </div>
     </div>
 
-    <!-- Category Panels -->
     <div style="margin-top:1.5rem;">
 
-      <!-- ==== Visual Detail Panel ==== -->
       <div class="cat-panel is-active" id="panel-visual-detail">
         <div class="box" style="border-radius:12px;">
           <h4 class="title is-5 has-text-centered">Visual Detail Reasoning — Multi-Model Comparison</h4>
-
-          <!-- Example 1 in this category -->
           <p class="has-text-weight-bold" style="margin-bottom:.5rem;">Q: What is the color of the Apple logo?</p>
-
           <div class="columns is-variable is-3">
-            <!-- Model A: Veo-3 -->
             <div class="column is-4">
               <div class="vid-card">
                 <div class="vid-card-header" style="background:#7c3aed;">
@@ -822,8 +745,6 @@ section class="hero is-light is-small">
                 </div>
               </div>
             </div>
-
-            <!-- Model B: Sora-2 -->
             <div class="column is-4">
               <div class="vid-card">
                 <div class="vid-card-header" style="background:#2563eb;">
@@ -848,8 +769,6 @@ section class="hero is-light is-small">
                 </div>
               </div>
             </div>
-
-            <!-- Model C: Kling -->
             <div class="column is-4">
               <div class="vid-card">
                 <div class="vid-card-header" style="background:#059669;">
@@ -875,11 +794,9 @@ section class="hero is-light is-small">
               </div>
             </div>
           </div>
-          <!-- Add more examples here -->
         </div>
       </div>
 
-      <!-- ==== Other panels (placeholder structure) ==== -->
       <div class="cat-panel" id="panel-visual-trace">
         <div class="box" style="border-radius:12px;">
           <h4 class="title is-5 has-text-centered">Visual Trace Reasoning — Multi-Model Comparison</h4>
@@ -979,7 +896,7 @@ section class="hero is-light is-small">
 
 
 <!-- ====================================================== -->
-<!-- ====== SECTION 5: TAKEAWAY 1 — RC vs GQ ============= -->
+<!-- ====== SECTION 5: TAKEAWAYS ========================== -->
 <!-- ====================================================== -->
 <section class="hero is-light is-small">
   <div class="hero-body has-text-centered">
@@ -1001,9 +918,7 @@ section class="hero is-light is-small">
         (e.g., Kling) produce visually stunning videos but fail to capture the correct reasoning.
         Conversely, lower-fidelity outputs can still answer the question correctly.
       </p>
-
       <div class="columns is-variable is-4">
-        <!-- High GQ, Low RC -->
         <div class="column is-6">
           <div class="vid-card">
             <div class="vid-card-header" style="background:#059669;">
@@ -1022,8 +937,6 @@ section class="hero is-light is-small">
             </div>
           </div>
         </div>
-
-        <!-- Low GQ, High RC -->
         <div class="column is-6">
           <div class="vid-card">
             <div class="vid-card-header" style="background:#7c3aed;">
@@ -1056,9 +969,7 @@ section class="hero is-light is-small">
         but may also introduce <b>hallucinations</b> when the model over-relies on the hint
         and generates content inconsistent with the visual input.
       </p>
-
       <div class="columns is-variable is-4">
-        <!-- Text Hint Helps -->
         <div class="column is-6">
           <div class="vid-card">
             <div class="vid-card-header text-hint">Text Hint Helps ✓</div>
@@ -1075,8 +986,6 @@ section class="hero is-light is-small">
             </div>
           </div>
         </div>
-
-        <!-- Text Hint Hurts -->
         <div class="column is-6">
           <div class="vid-card">
             <div class="vid-card-header" style="background:#dc2626;">Text Hint Hallucination ✗</div>
@@ -1107,9 +1016,7 @@ section class="hero is-light is-small">
         grounding, but in cluttered scenes they can confuse the model or shift attention
         away from the reasoning target.
       </p>
-
       <div class="columns is-variable is-4">
-        <!-- Visual Hint Helps -->
         <div class="column is-6">
           <div class="vid-card">
             <div class="vid-card-header visual-hint">Visual Hint Helps ✓</div>
@@ -1126,8 +1033,6 @@ section class="hero is-light is-small">
             </div>
           </div>
         </div>
-
-        <!-- Visual Hint Hurts -->
         <div class="column is-6">
           <div class="vid-card">
             <div class="vid-card-header" style="background:#dc2626;">Visual Hint Distraction ✗</div>
