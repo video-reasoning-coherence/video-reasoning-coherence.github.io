@@ -295,14 +295,57 @@
 <section class="section">
   <div class="container is-max-desktop">
 
-    <!-- 1.1 Hero video — apple falling example -->
-    <div class="has-text-centered" style="margin-bottom:2rem;">
-      <p class="is-size-6" style="color:#888; margin-bottom:.5rem;">▶ Example: Apple Falling — Physics-based Reasoning</p>
-      <div style="max-width:560px; margin:0 auto; border-radius:12px; overflow:hidden; box-shadow:var(--card-shadow);">
-        <!-- Replace src with your actual video/gif -->
-        <img src="static/images/videos/physics_based_reasoning/1_videos/generated_video_1.gif"
-             alt="Apple falling example"
-             style="width:100%; display:block;" />
+    <!-- 1.1 Hero video — 3 models, same hint -->
+    <div style="margin-bottom:2rem;">
+      <p class="has-text-centered is-size-5 has-text-weight-bold" style="margin-bottom:.3rem;">
+        Example: Apple Falling — Physics-based Reasoning
+      </p>
+
+      <!-- Shared Hint Box -->
+      <div style="max-width:700px; margin:0 auto 1.2rem; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:.7rem 1.2rem; text-align:center;">
+        <span style="font-weight:700; color:#059669; margin-right:.4rem;">
+          <i class="fas fa-wand-magic-sparkles"></i> Text Hint:
+        </span>
+        <span style="color:#333; font-size:.95rem;">
+          "The block rises to a height less than h due to energy loss from friction on the rough track."
+        </span>
+      </div>
+
+      <!-- 3 Model Cards -->
+      <div class="columns is-variable is-3">
+        <!-- Model 1: Veo-3 -->
+        <div class="column is-4">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#6b7a8d;">
+              Veo-3
+            </div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/physics_based_reasoning/1_videos/veo3.gif" alt="Veo-3"/>
+            </div>
+          </div>
+        </div>
+        <!-- Model 2: Sora-2 -->
+        <div class="column is-4">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#6b7a8d;">
+              Sora-2
+            </div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/physics_based_reasoning/1_videos/sora2.gif" alt="Sora-2"/>
+            </div>
+          </div>
+        </div>
+        <!-- Model 3: Kling -->
+        <div class="column is-4">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#6b7a8d;">
+              Kling
+            </div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/physics_based_reasoning/1_videos/kling.gif" alt="Kling"/>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
