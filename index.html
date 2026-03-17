@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="MME-CoF-Pro: Reasoning Coherence Evaluation for Video Models">
+  <meta name="keywords" content="MME-CoF-Pro, Video Reasoning, Reasoning Coherence">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MME-CoF-Pro</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <style>
+    /* ===== Global ===== */
+    :root {
+      --pri: #485fc7;
+      --pri-light: #f2f4ff;
+      --card-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    body { font-family: 'Noto Sans', sans-serif; }
+    .mathvista { font-family: 'Google Sans', sans-serif; }
+    .publication-title { font-family: 'Google Sans', sans-serif; font-weight: 700; }
+
+    /* ===== Hero / Header ===== */
+    .hero-body { padding-bottom: 1.5rem; }
+    .publication-links .button { margin: .25rem; }
+
+    /* ===== Reasoning Coherence Box ===== */
+    .rc-box {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+      border-left: 5px solid var(--pri);
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem auto;
+      max-width: 800px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* ===== Hint Comparison Slider ===== */
+    .hint-slider-wrap {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .hint-slider-track {
+      display: flex;
+      transition: transform .4s cubic-bezier(.25,.8,.25,1);
+    }
+    .hint-slide {
+      min-width: 100%;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+    .hint-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: var(--pri);
+      color: #fff;
+      border: none;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hint-nav:hover { background: #3a4fba; }
+    .hint-nav.prev { left: 6px; }
+    .hint-nav.next { right: 6px; }
+    .hint-dots {
+      display: flex; justify-content: center; gap: 8px; margin-top: 1rem;
+    }
+    .hint-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #ccc; border: none; cursor: pointer; padding: 0;
+    }
+    .hint-dot.active { background: var(--pri); }
+
+    /* ===== Video Card (3-col comparison) ===== */
+    .vid-card {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .vid-card-header {
+      background: var(--pri);
+      color: #fff;
+      text-align: center;
+      padding: .45rem .5rem;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+    .vid-card-header.no-hint { background: #6c757d; }
+    .vid-card-header.visual-hint { background: #0d9488; }
+    .vid-card-header.text-hint { background: #d97706; }
+    .vid-card-media {
+      aspect-ratio: 16/9;
+      background: #f5f5f5;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .vid-card-media img, .vid-card-media video {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .vid-card-body { padding: .7rem .85rem; font-size: .88rem; flex: 1; }
+    .vid-card-body .prompt-label {
+      font-weight: 700; font-size: .82rem; color: #555; margin-bottom: .25rem;
+    }
+    .vid-card-body .prompt-text {
+      font-size: .82rem; color: #444; line-height: 1.5;
+      max-height: 4.5rem; overflow: auto;
+    }
+
+    /* ===== Category Tabs (Visualization) ===== */
+    .rv-filterbar {
+      position: sticky; top: 0; z-index: 30;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.92));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      padding: .75rem 0 .5rem;
+    }
+    .rv-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: .65rem;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    @media (max-width:640px) { .rv-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    .rv-tab {
+      cursor: pointer; padding: .5rem .6rem; border-radius: 8px;
+      border: 1px solid rgba(0,0,0,.10); font-weight: 600; font-size: .88rem;
+      background: #fff; text-align: center;
+      transition: all .15s ease;
+    }
+    .rv-tab:hover { background: var(--pri-light); transform: translateY(-1px); }
+    .rv-tab.is-active {
+      background: var(--pri); color: #fff; border-color: var(--pri);
+      box-shadow: 0 2px 10px rgba(72,95,199,.25);
+    }
+    .cat-panel { display: none; }
+    .cat-panel.is-active { display: block; }
+
+    /* ===== Model Badge ===== */
+    .model-badge {
+      display: inline-block; padding: .15rem .55rem; border-radius: 6px;
+      font-size: .78rem; font-weight: 700; color: #fff; margin-bottom: .3rem;
+    }
+    .model-badge.veo3  { background: #7c3aed; }
+    .model-badge.sora2 { background: #2563eb; }
+    .model-badge.kling { background: #059669; }
+
+    /* ===== Takeaway Section ===== */
+    .takeaway-section {
+      background: #fafbff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .takeaway-section h3 { color: var(--pri); }
+
+    .score-tag {
+      display: inline-block;
+      padding: .2rem .6rem;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 700;
+      margin: .15rem .2rem;
+    }
+    .score-rc { background: #dbeafe; color: #1e40af; }
+    .score-gq { background: #d1fae5; color: #065f46; }
+    .score-low { background: #fee2e2; color: #991b1b; }
+
+    /* ===== Prompt Details ===== */
+    .rv-details {
+      border: 1px dashed rgba(0,0,0,.12);
+      border-radius: 8px;
+      padding: .5rem .75rem;
+      background: #fafbff;
+      margin-top: .4rem;
+    }
+    .rv-details summary {
+      cursor: pointer; list-style: none; font-weight: 700; font-size: .85rem;
+    }
+    .rv-details summary::-webkit-details-marker { display: none; }
+    .rv-details pre {
+      white-space: pre-wrap; word-break: break-word;
+      font-size: .82rem; line-height: 1.4;
+      background: #fff; padding: .5rem; border-radius: 6px;
+      border: 1px solid rgba(0,0,0,.06); margin-top: .4rem;
+      max-height: 12rem; overflow: auto;
+    }
+
+    /* ===== Benchmark Slider ===== */
+    .bench-slider-wrap {
+      position: relative; max-width: 750px; margin: 1.5rem auto; overflow: hidden;
+    }
+    .bench-slider-track { display: flex; transition: transform .4s ease; }
+    .bench-slide { min-width: 100%; display: flex; align-items: center; justify-content: center; }
+    .bench-slide img { max-width: 90%; border-radius: 10px; box-shadow: var(--card-shadow); }
+  </style>
+</head>
+
+<body>
+
+<!-- ======================= NAVBAR ======================= -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow:1; justify-content:center;">
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">More Research</a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://github.com/ZiyuGuo99/MME-CoF"><b>MME-CoF</b></a>
+          <a class="navbar-item" href="https://video-cof.github.io/">MME-CoF Website</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ======================= HERO ======================= -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-1 publication-title" style="font-size:2.6rem;">
+        <span class="mathvista">MME-CoF-Pro</span>
+      </h1>
+      <h2 class="subtitle is-4" style="margin-top:-.5rem;">
+        Evaluating Reasoning Coherence of Video Generation Models
+      </h2>
+
+      <!-- Authors (replace with real names) -->
+      <div class="is-size-5" style="margin-bottom:.5rem;">
+        <span><a href="#">Author A*</a><sup style="color:#6fbf73">1</sup>,</span>
+        <span><a href="#">Author B*</a><sup style="color:#ed4b82">2</sup>,</span>
+        <span><a href="#">Author C</a><sup style="color:#6fbf73">1</sup></span>
+      </div>
+      <div class="is-size-6" style="color:#666; margin-bottom:1rem;">
+        <sup style="color:#6fbf73">1</sup>Institution A&nbsp;&nbsp;&nbsp;
+        <sup style="color:#ed4b82">2</sup>Institution B
+      </div>
+
+      <!-- Links -->
+      <div class="publication-links">
+        <a href="#" class="button is-rounded is-dark">
+          <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+        </a>
+        <a href="#" class="button is-rounded is-dark">
+          <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+        </a>
+        <a href="#" class="button is-rounded is-dark">
+          <span class="icon" style="font-size:18px">🤗</span><span>Dataset</span>
+        </a>
+        <a href="#leaderboard" class="button is-rounded is-dark">
+          <span class="icon" style="font-size:18px">🏆</span><span>Leaderboard</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- ========= SECTION 1: REASONING COHERENCE ============= -->
+<!-- ====================================================== -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-2 mathvista">Reasoning Coherence</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- 1.1 Hero video — apple falling example -->
+    <div class="has-text-centered" style="margin-bottom:2rem;">
+      <p class="is-size-6" style="color:#888; margin-bottom:.5rem;">▶ Example: Apple Falling — Physics-based Reasoning</p>
+      <div style="max-width:560px; margin:0 auto; border-radius:12px; overflow:hidden; box-shadow:var(--card-shadow);">
+        <!-- Replace src with your actual video/gif -->
+        <img src="static/images/videos/physics_based_reasoning/1_videos/generated_video_1.gif"
+             alt="Apple falling example"
+             style="width:100%; display:block;" />
+      </div>
+    </div>
+
+    <!-- 1.2 Reasoning Coherence explanation box -->
+    <div class="rc-box">
+      <b>Reasoning Coherence</b> measures whether a video generation model can produce outputs
+      that are not only visually plausible, but also logically consistent with the underlying
+      reasoning task. Unlike generation quality (resolution, smoothness, aesthetics), reasoning
+      coherence focuses on whether the model's output faithfully reflects the correct answer
+      to a given visual reasoning question — e.g., does the ball actually fall due to gravity,
+      does the arrow trace the correct path, does the count match the ground truth?
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- ======= SECTION 2: NO HINT / VISUAL / TEXT HINT ====== -->
+<!-- ====================================================== -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-2 mathvista">No Hint, Visual Hint &amp; Text Hint</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:1140px;">
+
+    <p class="has-text-centered" style="margin-bottom:1.5rem; font-size:1.05rem; color:#555;">
+      We explore three prompting strategies for video reasoning: <b>No Hint</b> (plain task),
+      <b>Visual Hint</b> (annotated image guidance), and <b>Text Hint</b> (answer-aware prompt).
+      Slide through examples to see how hints affect model outputs.
+    </p>
+
+    <!-- === Hint Comparison Slider === -->
+    <div class="hint-slider-wrap" id="hintSlider">
+      <button class="hint-nav prev" onclick="hintGo(-1)"><i class="fas fa-chevron-left"></i></button>
+      <button class="hint-nav next" onclick="hintGo(1)"><i class="fas fa-chevron-right"></i></button>
+
+      <div class="hint-slider-track" id="hintTrack">
+
+        <!-- ===== EXAMPLE 1 ===== -->
+        <div class="hint-slide">
+          <p class="has-text-centered has-text-weight-bold" style="margin-bottom:.7rem;">
+            Example 1 — Physics: Block on Rough Semicircular Track
+          </p>
+          <div class="columns is-variable is-4">
+            <!-- No Hint -->
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header no-hint">No Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/physics_based_reasoning/1_videos/generated_video_1.gif" alt="no hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">No Hint Prompt</div>
+                  <div class="prompt-text">Show the rough semicircular track with a block at point P; release it and let it slide naturally. Static shot.</div>
+                </div>
+              </div>
+            </div>
+            <!-- Visual Hint -->
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header visual-hint">Visual Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/physics_based_reasoning/1_videos/generated_video_1.gif" alt="visual hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Visual Hint Prompt</div>
+                  <div class="prompt-text">Show the rough semicircular track with height label h. An annotated arrow shows friction direction. Release the block from P and show it stops below the rim on the other side. Static shot.</div>
+                </div>
+              </div>
+            </div>
+            <!-- Text Hint -->
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header text-hint">Text Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/physics_based_reasoning/1_videos/generated_video_1.gif" alt="text hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Text Hint Prompt</div>
+                  <div class="prompt-text">The answer is: the block rises to a height less than h due to energy loss from friction. Animate the block sliding down and rising to a clearly lower height on the opposite side. Static shot.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== EXAMPLE 2 ===== -->
+        <div class="hint-slide">
+          <p class="has-text-centered has-text-weight-bold" style="margin-bottom:.7rem;">
+            Example 2 — Counting: How Many Fish?
+          </p>
+          <div class="columns is-variable is-4">
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header no-hint">No Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/object_counting_reasoning/3_videos/generated_video_1.gif" alt="no hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">No Hint Prompt</div>
+                  <div class="prompt-text">Label all fish in the image with increasing numbers. Static camera.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header visual-hint">Visual Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/object_counting_reasoning/3_videos/generated_video_1.gif" alt="visual hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Visual Hint Prompt</div>
+                  <div class="prompt-text">Bounding boxes are pre-drawn around each fish. Label them with numbers 1–N. Static camera.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header text-hint">Text Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/object_counting_reasoning/3_videos/generated_video_1.gif" alt="text hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Text Hint Prompt</div>
+                  <div class="prompt-text">There are exactly 7 fish. Label each one from 1 to 7 clearly. Static camera.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== EXAMPLE 3 ===== -->
+        <div class="hint-slide">
+          <p class="has-text-centered has-text-weight-bold" style="margin-bottom:.7rem;">
+            Example 3 — Rotation: Grid Pattern
+          </p>
+          <div class="columns is-variable is-4">
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header no-hint">No Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/rotation_reasoning/4_videos/generated_video_1.gif" alt="no hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">No Hint Prompt</div>
+                  <div class="prompt-text">Rotate the grid 360° clockwise. Static camera.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header visual-hint">Visual Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/rotation_reasoning/4_videos/generated_video_1.gif" alt="visual hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Visual Hint Prompt</div>
+                  <div class="prompt-text">A rotation axis indicator is drawn at center. Rotate the grid 360° clockwise, preserving all cell colors. Static camera.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header text-hint">Text Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/rotation_reasoning/4_videos/generated_video_1.gif" alt="text hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Text Hint Prompt</div>
+                  <div class="prompt-text">The correct answer is option B (90° rotation matches). Show a smooth 360° clockwise rotation of the original grid, pausing at 90° to highlight the match. Static camera.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== EXAMPLE 4 ===== -->
+        <div class="hint-slide">
+          <p class="has-text-centered has-text-weight-bold" style="margin-bottom:.7rem;">
+            Example 4 — 2D Geometry: Connect Points
+          </p>
+          <div class="columns is-variable is-4">
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header no-hint">No Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/2D_geometry_reasoning/1_videos/generated_video_1.gif" alt="no hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">No Hint Prompt</div>
+                  <div class="prompt-text">Connect point A to point C with a line. Static view.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header visual-hint">Visual Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/2D_geometry_reasoning/1_videos/generated_video_1.gif" alt="visual hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Visual Hint Prompt</div>
+                  <div class="prompt-text">Points A and C are highlighted with red circles. Draw a diagonal line connecting them. Static view.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header text-hint">Text Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/2D_geometry_reasoning/1_videos/generated_video_1.gif" alt="text hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Text Hint Prompt</div>
+                  <div class="prompt-text">The diagonal AC has length 10 (by Pythagorean theorem: √(6²+8²)). Draw the line from A to C, displaying the length. Static view.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== EXAMPLE 5 ===== -->
+        <div class="hint-slide">
+          <p class="has-text-centered has-text-weight-bold" style="margin-bottom:.7rem;">
+            Example 5 — Table & Chart: Zoom to Data
+          </p>
+          <div class="columns is-variable is-4">
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header no-hint">No Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/table_and_chart_reasoning/2_videos/generated_video_1.gif" alt="no hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">No Hint Prompt</div>
+                  <div class="prompt-text">Zoom in on the year 2014 area of the chart. Static shot.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header visual-hint">Visual Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/table_and_chart_reasoning/2_videos/generated_video_1.gif" alt="visual hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Visual Hint Prompt</div>
+                  <div class="prompt-text">A red rectangle highlights the 2014 column. Zoom into that region. Keep all chart data unchanged. Static shot.</div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header text-hint">Text Hint</div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/table_and_chart_reasoning/2_videos/generated_video_1.gif" alt="text hint"/>
+                </div>
+                <div class="vid-card-body">
+                  <div class="prompt-label">Text Hint Prompt</div>
+                  <div class="prompt-text">In 2014, the "Good" opinion is dominant at 48%. Zoom into the 2014 area and highlight the tallest bar. Static shot.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /hint-slider-track -->
+
+      <div class="hint-dots" id="hintDots"></div>
+    </div><!-- /hint-slider-wrap -->
+
+    <p class="has-text-centered" style="margin-top:1.5rem; font-size:1.05rem; color:#333;">
+      <i class="fas fa-lightbulb" style="color:#d97706;"></i>&nbsp;
+      <b>Hints can significantly influence model performance</b> — both positively (guiding correct reasoning)
+      and negatively (introducing hallucinations when the hint is misleading or overly specific).
+    </p>
+
+  </div>
+</section>
+
+<!-- Hint Slider Script -->
+<script>
+(function(){
+  let cur = 0;
+  const track = document.getElementById('hintTrack');
+  const slides = track.querySelectorAll('.hint-slide');
+  const dotsWrap = document.getElementById('hintDots');
+  const total = slides.length;
+
+  // build dots
+  for(let i=0;i<total;i++){
+    const d = document.createElement('button');
+    d.className = 'hint-dot' + (i===0?' active':'');
+    d.onclick = ()=> slideTo(i);
+    dotsWrap.appendChild(d);
+  }
+  function slideTo(i){
+    cur = Math.max(0, Math.min(i, total-1));
+    track.style.transform = `translateX(-${cur*100}%)`;
+    dotsWrap.querySelectorAll('.hint-dot').forEach((d,j)=> d.classList.toggle('active', j===cur));
+  }
+  window.hintGo = function(dir){ slideTo(cur+dir); };
+})();
+</script>
+
+
+<!-- ====================================================== -->
+<!-- ========= SECTION 3: MME-CoF-Pro BENCHMARK =========== -->
+<!-- ====================================================== -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-2 mathvista">MME-CoF-Pro Benchmark</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="content has-text-justified" style="margin-bottom:1.5rem;">
+      <p>
+        <b>MME-CoF-Pro</b> extends the original MME-CoF benchmark with a focus on
+        <b>reasoning coherence</b> evaluation under three prompting conditions (No Hint,
+        Visual Hint, Text Hint). It covers 12 reasoning categories with XXX curated
+        instances, enabling fine-grained analysis of how different hint modalities
+        affect a model's ability to produce reasoning-faithful videos.
+      </p>
+    </div>
+
+    <!-- Benchmark figure slider -->
+    <div class="bench-slider-wrap" id="benchSlider">
+      <button class="hint-nav prev" onclick="benchGo(-1)"><i class="fas fa-chevron-left"></i></button>
+      <button class="hint-nav next" onclick="benchGo(1)"><i class="fas fa-chevron-right"></i></button>
+      <div class="bench-slider-track" id="benchTrack">
+        <!-- Replace with your actual benchmark figures from Overleaf -->
+        <div class="bench-slide">
+          <img src="static/images/radar.png" alt="Radar Chart" />
+        </div>
+        <div class="bench-slide">
+          <img src="static/images/category.png" alt="Category Distribution" />
+        </div>
+        <div class="bench-slide">
+          <img src="static/images/wordcloud.png" alt="Word Cloud" />
+        </div>
+      </div>
+      <div class="hint-dots" id="benchDots"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  let cur = 0;
+  const track = document.getElementById('benchTrack');
+  const slides = track.querySelectorAll('.bench-slide');
+  const dotsWrap = document.getElementById('benchDots');
+  const total = slides.length;
+  for(let i=0;i<total;i++){
+    const d = document.createElement('button');
+    d.className = 'hint-dot' + (i===0?' active':'');
+    d.onclick = ()=> slideTo(i);
+    dotsWrap.appendChild(d);
+  }
+  function slideTo(i){
+    cur = Math.max(0, Math.min(i, total-1));
+    track.style.transform = `translateX(-${cur*100}%)`;
+    dotsWrap.querySelectorAll('.hint-dot').forEach((d,j)=> d.classList.toggle('active', j===cur));
+  }
+  window.benchGo = function(dir){ slideTo(cur+dir); };
+})();
+</script>
+
+
+<!-- ====================================================== -->
+<!-- ============ SECTION 4: VISUALIZATION ================ -->
+<!-- ====================================================== -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-2 mathvista">Visualization</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Category Tabs -->
+    <div class="rv-filterbar">
+      <div class="rv-tabs" id="vizTabs">
+        <button class="rv-tab is-active" data-cat="visual-detail">Visual Detail</button>
+        <button class="rv-tab" data-cat="visual-trace">Visual Trace</button>
+        <button class="rv-tab" data-cat="spatial">Real-world Spatial</button>
+        <button class="rv-tab" data-cat="3d-geo">3D Geometry</button>
+        <button class="rv-tab" data-cat="2d-geo">2D Geometry</button>
+        <button class="rv-tab" data-cat="physics">Physics-based</button>
+        <button class="rv-tab" data-cat="rotation">Rotation</button>
+        <button class="rv-tab" data-cat="chart">Table &amp; Chart</button>
+        <button class="rv-tab" data-cat="counting">Object Counting</button>
+        <button class="rv-tab" data-cat="gui">GUI</button>
+        <button class="rv-tab" data-cat="embodied">Embodied</button>
+        <button class="rv-tab" data-cat="medical">Medical</button>
+      </div>
+    </div>
+
+    <!-- Category Panels -->
+    <div style="margin-top:1.5rem;">
+
+      <!-- ==== Visual Detail Panel ==== -->
+      <div class="cat-panel is-active" id="panel-visual-detail">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Visual Detail Reasoning — Multi-Model Comparison</h4>
+
+          <!-- Example 1 in this category -->
+          <p class="has-text-weight-bold" style="margin-bottom:.5rem;">Q: What is the color of the Apple logo?</p>
+
+          <div class="columns is-variable is-3">
+            <!-- Model A: Veo-3 -->
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header" style="background:#7c3aed;">
+                  <span class="model-badge veo3" style="padding:0;">Veo-3</span> — No Hint
+                </div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/visual_detail_reasoning/1_videos/generated_video_5.gif" alt="veo3"/>
+                </div>
+                <div class="vid-card-body">
+                  <details class="rv-details">
+                    <summary>No Hint Prompt</summary>
+                    <pre>Zoom in on the black bag with the Apple logo. Static shot.</pre>
+                  </details>
+                  <details class="rv-details" style="margin-top:.3rem;">
+                    <summary>Visual Hint Prompt</summary>
+                    <pre>A red circle highlights the Apple logo area. Zoom in on it. Static shot.</pre>
+                  </details>
+                  <details class="rv-details" style="margin-top:.3rem;">
+                    <summary>Text Hint Prompt</summary>
+                    <pre>The Apple logo is white/silver. Zoom in to clearly show its color. Static shot.</pre>
+                  </details>
+                </div>
+              </div>
+            </div>
+
+            <!-- Model B: Sora-2 -->
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header" style="background:#2563eb;">
+                  <span class="model-badge sora2" style="padding:0;">Sora-2</span> — No Hint
+                </div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/visual_detail_reasoning/1_videos/generated_video_5.gif" alt="sora2"/>
+                </div>
+                <div class="vid-card-body">
+                  <details class="rv-details">
+                    <summary>No Hint Prompt</summary>
+                    <pre>Zoom in on the black bag with the Apple logo. Static shot.</pre>
+                  </details>
+                  <details class="rv-details" style="margin-top:.3rem;">
+                    <summary>Visual Hint Prompt</summary>
+                    <pre>A red circle highlights the Apple logo area. Zoom in on it. Static shot.</pre>
+                  </details>
+                  <details class="rv-details" style="margin-top:.3rem;">
+                    <summary>Text Hint Prompt</summary>
+                    <pre>The Apple logo is white/silver. Zoom in to clearly show its color. Static shot.</pre>
+                  </details>
+                </div>
+              </div>
+            </div>
+
+            <!-- Model C: Kling -->
+            <div class="column is-4">
+              <div class="vid-card">
+                <div class="vid-card-header" style="background:#059669;">
+                  <span class="model-badge kling" style="padding:0;">Kling</span> — No Hint
+                </div>
+                <div class="vid-card-media">
+                  <img src="static/images/videos/visual_detail_reasoning/1_videos/generated_video_5.gif" alt="kling"/>
+                </div>
+                <div class="vid-card-body">
+                  <details class="rv-details">
+                    <summary>No Hint Prompt</summary>
+                    <pre>Zoom in on the black bag with the Apple logo. Static shot.</pre>
+                  </details>
+                  <details class="rv-details" style="margin-top:.3rem;">
+                    <summary>Visual Hint Prompt</summary>
+                    <pre>A red circle highlights the Apple logo area. Zoom in on it. Static shot.</pre>
+                  </details>
+                  <details class="rv-details" style="margin-top:.3rem;">
+                    <summary>Text Hint Prompt</summary>
+                    <pre>The Apple logo is white/silver. Zoom in to clearly show its color. Static shot.</pre>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Add more examples here -->
+        </div>
+      </div>
+
+      <!-- ==== Other panels (placeholder structure) ==== -->
+      <div class="cat-panel" id="panel-visual-trace">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Visual Trace Reasoning — Multi-Model Comparison</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon. Replace with your actual data.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-spatial">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Real-world Spatial Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-3d-geo">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">3D Geometry Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-2d-geo">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">2D Geometry Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-physics">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Physics-based Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-rotation">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Rotation Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-chart">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Table &amp; Chart Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-counting">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Object Counting Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-gui">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">GUI Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-embodied">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Embodied Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+      <div class="cat-panel" id="panel-medical">
+        <div class="box" style="border-radius:12px;">
+          <h4 class="title is-5 has-text-centered">Medical Reasoning</h4>
+          <p class="has-text-centered" style="color:#888;">Examples coming soon.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Viz Tab Script -->
+<script>
+(function(){
+  const tabs = document.querySelectorAll('#vizTabs .rv-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t => t.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('is-active'));
+      const panel = document.getElementById('panel-' + tab.dataset.cat);
+      if(panel) panel.classList.add('is-active');
+    });
+  });
+})();
+</script>
+
+
+<!-- ====================================================== -->
+<!-- ====== SECTION 5: TAKEAWAY 1 — RC vs GQ ============= -->
+<!-- ====================================================== -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-2 mathvista">Takeaways</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:1100px;">
+
+    <!-- Takeaway 1 -->
+    <div class="takeaway-section">
+      <h3 class="title is-4">
+        <span style="font-size:1.3rem; margin-right:.4rem;">💡</span>
+        Takeaway 1: Reasoning Coherence vs. Generation Quality
+      </h3>
+      <p style="margin-bottom:1.2rem;">
+        High generation quality does <b>not</b> guarantee reasoning coherence. Some models
+        (e.g., Kling) produce visually stunning videos but fail to capture the correct reasoning.
+        Conversely, lower-fidelity outputs can still answer the question correctly.
+      </p>
+
+      <div class="columns is-variable is-4">
+        <!-- High GQ, Low RC -->
+        <div class="column is-6">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#059669;">
+              <span class="model-badge kling" style="padding:0">Kling</span> — Beautiful but Wrong
+            </div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/physics_based_reasoning/2_videos/generated_video_1.gif" alt="kling example"/>
+            </div>
+            <div class="vid-card-body">
+              <p>Q: Which numbered brick will the ball hit first?</p>
+              <div style="margin-top:.4rem;">
+                <span class="score-tag score-gq">Gen Quality: 3.8/4</span>
+                <span class="score-tag score-low">Reasoning: 0.5/4</span>
+              </div>
+              <p style="font-size:.82rem; color:#666; margin-top:.3rem;">Visually smooth and high-fidelity, but the ball trajectory violates reflection physics.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Low GQ, High RC -->
+        <div class="column is-6">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#7c3aed;">
+              <span class="model-badge veo3" style="padding:0">Veo-3</span> — Rough but Correct
+            </div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/physics_based_reasoning/2_videos/generated_video_1.gif" alt="veo3 example"/>
+            </div>
+            <div class="vid-card-body">
+              <p>Q: Which numbered brick will the ball hit first?</p>
+              <div style="margin-top:.4rem;">
+                <span class="score-tag score-low">Gen Quality: 1.8/4</span>
+                <span class="score-tag score-rc">Reasoning: 3.2/4</span>
+              </div>
+              <p style="font-size:.82rem; color:#666; margin-top:.3rem;">Lower visual fidelity, but the ball correctly follows reflection rules.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Takeaway 2 -->
+    <div class="takeaway-section">
+      <h3 class="title is-4">
+        <span style="font-size:1.3rem; margin-right:.4rem;">📝</span>
+        Takeaway 2: Text Hint — Double-Edged Sword
+      </h3>
+      <p style="margin-bottom:1.2rem;">
+        Text hints with answer information can boost reasoning coherence in many cases,
+        but may also introduce <b>hallucinations</b> when the model over-relies on the hint
+        and generates content inconsistent with the visual input.
+      </p>
+
+      <div class="columns is-variable is-4">
+        <!-- Text Hint Helps -->
+        <div class="column is-6">
+          <div class="vid-card">
+            <div class="vid-card-header text-hint">Text Hint Helps ✓</div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/object_counting_reasoning/1_videos/generated_video_1.gif" alt="text helps"/>
+            </div>
+            <div class="vid-card-body">
+              <p><b>Without hint:</b> Model counts 5 squares (wrong)</p>
+              <p><b>With text hint:</b> "The line passes through 8 squares." → Model correctly highlights 8.</p>
+              <div style="margin-top:.3rem;">
+                <span class="score-tag score-low">No Hint: 1.0/4</span>
+                <span class="score-tag score-rc">Text Hint: 3.5/4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Text Hint Hurts -->
+        <div class="column is-6">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#dc2626;">Text Hint Hallucination ✗</div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/table_and_chart_reasoning/1_videos/generated_video_1.gif" alt="text hurts"/>
+            </div>
+            <div class="vid-card-body">
+              <p><b>Without hint:</b> Model correctly zooms to row (score 2.5)</p>
+              <p><b>With text hint:</b> Model fabricates data values from the hint, distorting the chart.</p>
+              <div style="margin-top:.3rem;">
+                <span class="score-tag score-rc">No Hint: 2.5/4</span>
+                <span class="score-tag score-low">Text Hint: 0.8/4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Takeaway 3 -->
+    <div class="takeaway-section">
+      <h3 class="title is-4">
+        <span style="font-size:1.3rem; margin-right:.4rem;">👁️</span>
+        Takeaway 3: Visual Hint — Grounding Helps, Clutter Hurts
+      </h3>
+      <p style="margin-bottom:1.2rem;">
+        Visual hints (bounding boxes, arrows, highlighted regions) generally improve spatial
+        grounding, but in cluttered scenes they can confuse the model or shift attention
+        away from the reasoning target.
+      </p>
+
+      <div class="columns is-variable is-4">
+        <!-- Visual Hint Helps -->
+        <div class="column is-6">
+          <div class="vid-card">
+            <div class="vid-card-header visual-hint">Visual Hint Helps ✓</div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/real_world_spatial_reasoning/2_videos/generated_video_1.gif" alt="visual helps"/>
+            </div>
+            <div class="vid-card-body">
+              <p><b>Without hint:</b> Model pans to wrong player</p>
+              <p><b>With visual hint:</b> Arrow from #10 → basketball. Model correctly identifies spatial relation.</p>
+              <div style="margin-top:.3rem;">
+                <span class="score-tag score-low">No Hint: 1.2/4</span>
+                <span class="score-tag score-rc">Visual Hint: 3.0/4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Hint Hurts -->
+        <div class="column is-6">
+          <div class="vid-card">
+            <div class="vid-card-header" style="background:#dc2626;">Visual Hint Distraction ✗</div>
+            <div class="vid-card-media">
+              <img src="static/images/videos/visual_detail_reasoning/3_videos/generated_video_2.gif" alt="visual hurts"/>
+            </div>
+            <div class="vid-card-body">
+              <p><b>Without hint:</b> Model correctly identifies motorcycle position</p>
+              <p><b>With visual hint:</b> Overlapping bounding boxes in the cluttered scene mislead the model.</p>
+              <div style="margin-top:.3rem;">
+                <span class="score-tag score-rc">No Hint: 2.8/4</span>
+                <span class="score-tag score-low">Visual Hint: 1.3/4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ====================================================== -->
+<!-- ================ BIBTEX ============================== -->
+<!-- ====================================================== -->
+<section id="bibtex" class="section">
+  <div class="container has-text-centered">
+    <h2 class="title is-3">BibTeX</h2>
+    <div class="box" style="background:#fafafa; border-radius:10px;">
+      <pre id="bibtexContent" style="text-align:left; white-space:pre-wrap; padding:1.5rem; font-size:14px;">
+@article{yourname2025mmecofpro,
+  title={MME-CoF-Pro: Evaluating Reasoning Coherence of Video Generation Models},
+  author={Author A and Author B and Author C},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
+  year={2025}
+}
+      </pre>
+      <button id="copyBibtex" class="button is-light is-small">Copy BibTeX</button>
+    </div>
+  </div>
+</section>
+
+<script>
+document.getElementById("copyBibtex").addEventListener("click", function(){
+  const text = document.getElementById("bibtexContent").textContent.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById("copyBibtex");
+    btn.textContent = "Copied!";
+    setTimeout(()=> btn.textContent = "Copy BibTeX", 1200);
+  });
+});
+</script>
+
+<!-- ====================================================== -->
+<!-- ================ FOOTER ============================== -->
+<!-- ====================================================== -->
+<footer class="footer">
+  <div class="content has-text-centered">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <p>
+          This website is licensed under a
+          <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
