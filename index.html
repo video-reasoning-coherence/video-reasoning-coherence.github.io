@@ -680,7 +680,7 @@
 <!-- ====================================================== -->
 <!-- ========= SECTION 3: MME-CoF-Pro BENCHMARK =========== -->
 <!-- ====================================================== -->
-<section class="hero is-light is-small">
+section class="hero is-light is-small">
   <div class="hero-body has-text-centered">
     <h1 class="title is-2 mathvista">MME-CoF-Pro Benchmark</h1>
   </div>
@@ -688,54 +688,67 @@
 
 <section class="section">
   <div class="container is-max-desktop">
-    <div class="content has-text-justified" style="margin-bottom:1.5rem;">
+
+    <!-- 介绍文字 -->
+    <div class="content has-text-justified" style="margin-bottom:2rem; max-width:860px; margin-left:auto; margin-right:auto;">
       <p>
         <b>MME-CoF-Pro</b> extends the original MME-CoF benchmark with a focus on
         <b>reasoning coherence</b> evaluation under three prompting conditions (No Hint,
         Visual Hint, Text Hint). It covers 12 reasoning categories with XXX curated
         instances, enabling fine-grained analysis of how different hint modalities
-        affect a model's ability to produce reasoning-faithful videos.
+        affect a model's ability to produce reasoning-faithful videos. Each instance
+        is evaluated along multiple dimensions including instruction alignment,
+        temporal consistency, and content fidelity.
       </p>
     </div>
 
-    <!-- Benchmark figure slider -->
-    <div class="bench-slider-wrap" id="benchSlider">
-      <button class="hint-nav prev" onclick="benchGo(-1)"><i class="fas fa-chevron-left"></i></button>
-      <button class="hint-nav next" onclick="benchGo(1)"><i class="fas fa-chevron-right"></i></button>
-      <div class="bench-slider-track" id="benchTrack">
-        <!-- Replace with your actual benchmark figures from Overleaf -->
-        <div class="bench-slide">
-          <img src="static/images/radar.png" alt="Radar Chart" />
+    <!-- 新增！！！ 图表滑动器 -->
+    <div style="position:relative; max-width:750px; margin:0 auto; overflow:hidden;">
+      <!-- 左右箭头 -->
+      <button onclick="benchGo(-1)" style="position:absolute; top:50%; left:6px; transform:translateY(-50%); z-index:10; background:var(--pri); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:1.1rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center;">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button onclick="benchGo(1)" style="position:absolute; top:50%; right:6px; transform:translateY(-50%); z-index:10; background:var(--pri); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:1.1rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center;">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+
+      <!-- 图片轨道 -->
+      <div id="benchTrack" style="display:flex; transition:transform .4s ease;">
+        <div style="min-width:100%; display:flex; align-items:center; justify-content:center; padding:1rem;">
+          <img src="static/images/benchmark/fig1.png" alt="Figure 1" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
         </div>
-        <div class="bench-slide">
-          <img src="static/images/category.png" alt="Category Distribution" />
+        <div style="min-width:100%; display:flex; align-items:center; justify-content:center; padding:1rem;">
+          <img src="static/images/benchmark/fig2.png" alt="Figure 2" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
         </div>
-        <div class="bench-slide">
-          <img src="static/images/wordcloud.png" alt="Word Cloud" />
+        <div style="min-width:100%; display:flex; align-items:center; justify-content:center; padding:1rem;">
+          <img src="static/images/benchmark/fig3.png" alt="Figure 3" style="max-width:90%; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.06);"/>
         </div>
       </div>
-      <div class="hint-dots" id="benchDots"></div>
+
+      <!-- 圆点 -->
+      <div id="benchDots" style="display:flex; justify-content:center; gap:8px; margin-top:.8rem;"></div>
     </div>
+
   </div>
 </section>
 
+<!-- 新增！！！ 图表滑动脚本 -->
 <script>
 (function(){
   let cur = 0;
   const track = document.getElementById('benchTrack');
-  const slides = track.querySelectorAll('.bench-slide');
+  const total = track.children.length;
   const dotsWrap = document.getElementById('benchDots');
-  const total = slides.length;
   for(let i=0;i<total;i++){
     const d = document.createElement('button');
-    d.className = 'hint-dot' + (i===0?' active':'');
-    d.onclick = ()=> slideTo(i);
+    d.style.cssText = 'width:10px;height:10px;border-radius:50%;border:none;cursor:pointer;padding:0;background:' + (i===0?'var(--pri)':'#ccc');
+    d.onclick = () => slideTo(i);
     dotsWrap.appendChild(d);
   }
   function slideTo(i){
     cur = Math.max(0, Math.min(i, total-1));
-    track.style.transform = `translateX(-${cur*100}%)`;
-    dotsWrap.querySelectorAll('.hint-dot').forEach((d,j)=> d.classList.toggle('active', j===cur));
+    track.style.transform = 'translateX(-' + (cur*100) + '%)';
+    Array.from(dotsWrap.children).forEach((d,j) => d.style.background = j===cur ? 'var(--pri)' : '#ccc');
   }
   window.benchGo = function(dir){ slideTo(cur+dir); };
 })();
