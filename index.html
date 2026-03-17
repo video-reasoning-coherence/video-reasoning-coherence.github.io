@@ -393,31 +393,31 @@
     <!-- ========== 新增！！！ Panel 0: Physics ========== -->
     <div class="hint-panel is-active" data-idx="0">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
-        Physics-based Reasoning
+        Embodied Reasoning
       </p>
       <div class="columns is-variable is-3">
         <div class="column is-4">
           <div class="vid-card">
-            <div class="vid-card-header" style="background:#7b8fa3;">No Hint</div>
+            <div class="vid-card-header" style="background:#81d4fa;">No Hint</div>
             <div class="vid-card-media">
-              <video src="static/images/videos/hint_comparison/physics/no_hint.mp4" autoplay muted loop playsinline></video>
+              <video src="static/images/videos/compare/1/no.mp4" autoplay muted loop playsinline></video>
             </div>
             <div class="vid-card-body">
               <p style="font-size:.78rem; color:#888; line-height:1.45;">
-                <b style="color:#666;">No Hint Prompt:</b> Show the rough semicircular track with a block at point P. Release it and let it slide. Static shot.
+                <b style="color:#666;">No Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the green cup.
               </p>
             </div>
           </div>
         </div>
         <div class="column is-4">
           <div class="vid-card">
-            <div class="vid-card-header" style="background:#5ba3cf;">Visual Hint</div>
+            <div class="vid-card-header" style="background:#4fc3f7;">Visual Hint</div>
             <div class="vid-card-media">
-              <video src="static/images/videos/hint_comparison/physics/visual_hint.mp4" autoplay muted loop playsinline></video>
+              <video src="static/images/videos/compare/1/visual.mp4" autoplay muted loop playsinline></video>
             </div>
             <div class="vid-card-body">
               <p style="font-size:.78rem; color:#888; line-height:1.45;">
-                <b style="color:#666;">Visual Hint Prompt:</b> An annotated arrow shows friction direction on the track. Release the block from P and show it stops below the rim. Static shot.
+                <b style="color:#666;">Visual Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the green cup as indicated by red arrow.
               </p>
             </div>
           </div>
@@ -426,18 +426,17 @@
           <div class="vid-card">
             <div class="vid-card-header" style="background:#64b5f6;">Text Hint</div>
             <div class="vid-card-media">
-              <video src="static/images/videos/hint_comparison/physics/text_hint.mp4" autoplay muted loop playsinline></video>
+              <video src="static/images/videos/compare/1/text.mp4" autoplay muted loop playsinline></video>
             </div>
             <div class="vid-card-body">
               <p style="font-size:.78rem; color:#888; line-height:1.45;">
-                <b style="color:#666;">Text Hint Prompt:</b> The answer is: the block rises to a height less than h due to energy loss from friction. Animate accordingly. Static shot.
+                <b style="color:#666;">Text Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the upperleft white cup. The gripper should gradually move leftwards, grasp the green cup, and then lift it up.
               </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <!-- ========== 新增！！！ Panel 1: Counting ========== -->
     <div class="hint-panel" data-idx="1">
       <p class="has-text-centered has-text-weight-bold" style="margin-bottom:1.5rem;">
