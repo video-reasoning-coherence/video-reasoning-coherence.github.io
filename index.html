@@ -137,7 +137,7 @@
 </section>
 
 <!-- ========== SECTION 1: REASONING COHERENCE ========== -->
-<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-2 mathvista">Reasoning Coherence</h1></div></section>
+<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-4 mathvista">Reasoning Coherence</h1></div></section>
 
 <section class="section">
   <div class="container is-max-desktop">
@@ -222,7 +222,7 @@
       </div>
 
       <div style="margin-top:1.35rem; background:#fafafa; border:1px solid rgba(0,0,0,.06); border-radius:12px; padding:1rem 1.15rem;">
-        <div style="font-size:.86rem; font-weight:950; color:#111; margin-bottom:.55rem;">RS Rubric</div>
+        <div style="font-size:.86rem; font-weight:950; color:#111; margin-bottom:.55rem;">Reasoning Score Rubric</div>
         <div style="font-size:.78rem; line-height:1.55; color:#444;">
           <div>1. An apple appears above the container and begins falling straight downward.</div>
           <div>2. The apple follows a continuous downward trajectory toward the container opening.</div>
@@ -238,14 +238,15 @@
 </section>
 
 <!-- ========== SECTION 2: NO HINT / VISUAL / TEXT HINT ========== -->
-<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-2 mathvista">No Hint &amp; Text Hint &amp; Visual Hint</h1></div></section>
+<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-4 mathvista">No Hint &amp; Text Hint &amp; Visual Hint</h1></div></section>
 
 <section class="section">
   <div class="container" style="max-width:1100px;">
     <p class="has-text-centered" style="margin-bottom:2rem; font-size:1.05rem; color:#555;">
-      We explore three prompting strategies for video reasoning: <b>No Hint</b> (plain task),
-      <b>Visual Hint</b> (annotated image guidance), and <b>Text Hint</b> (answer-aware prompt).
-      Click each category to compare how different hints affect model outputs.
+      We evaluate each sample under three controlled settings that differ only in the provided reasoning guidance.
+      In the <b>no-hint</b> setting, models rely solely on the original instruction;
+      the <b>text-hint</b> setting adds explicit textual reasoning steps;
+      and the <b>visual-hint</b> setting (for visually demanding tasks) highlights relevant regions or directions in the image using annotations.
     </p>
     <div style="display:flex; justify-content:center; gap:.6rem; flex-wrap:wrap; margin-bottom:2rem;">
       <button class="hint-cat-tab is-active" data-idx="0">Embodied Reasoning</button>
@@ -260,7 +261,7 @@
       <div class="columns is-variable is-3">
         <div class="column is-4"><div class="vid-card"><div class="vid-card-header" style="background:#81d4fa;">No Hint</div><div class="vid-card-media"><img src="static/images/videos_gif/compare/1/no.gif" data-download-href="static/images/videos_gif/compare/1/no.gif" alt="" /></div><div class="vid-card-body"><p style="font-size:.78rem; color:#888; line-height:1.45;"><b style="color:#666;">No Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the green cup.</p></div></div></div>
         <div class="column is-4"><div class="vid-card"><div class="vid-card-header" style="background:#4fc3f7;">Visual Hint</div><div class="vid-card-media"><img src="static/images/videos_gif/compare/1/visual.gif" data-download-href="static/images/videos_gif/compare/1/visual.gif" alt="" /></div><div class="vid-card-body"><p style="font-size:.78rem; color:#888; line-height:1.45;"><b style="color:#666;">Visual Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the green cup as indicated by red arrow.</p></div></div></div>
-        <div class="column is-4"><div class="vid-card"><div class="vid-card-header" style="background:#64b5f6;">Text Hint</div><div class="vid-card-media"><img src="static/images/videos_gif/compare/1/text.gif" data-download-href="static/images/videos_gif/compare/1/text.gif" alt="" /></div><div class="vid-card-body"><p style="font-size:.78rem; color:#888; line-height:1.45;"><b style="color:#666;">Text Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the upperleft white cup. The gripper should gradually move leftwards, grasp the green cup, and then lift it up.</p></div></div></div>
+        <div class="column is-4"><div class="vid-card"><div class="vid-card-header" style="background:#64b5f6;">Text Hint</div><div class="vid-card-media"><img src="static/images/videos_gif/compare/1/text.gif" data-download-href="static/images/videos_gif/compare/1/text.gif" alt="" /></div><div class="vid-card-body"><p style="font-size:.78rem; color:#888; line-height:1.45;"><b style="color:#666;">Text Hint Prompt:</b> Generate the correct trajectory for the gripper to pick up the green cup. The gripper should gradually move leftwards, grasp the green cup, and then lift it up.</p></div></div></div>
       </div>
     </div>
 
@@ -300,7 +301,6 @@
       </div>
     </div>
 
-    <p class="has-text-centered" style="margin-top:2rem; font-size:1.1rem; color:#333; font-weight:600;">Hints can significantly influence model reasoning performance — both positively and negatively.</p>
   </div>
 </section>
 
@@ -316,8 +316,35 @@
 })();
 </script>
 
+<!-- Force Section 2 card order: No Hint -> Text Hint -> Visual Hint -->
+<script>
+(function(){
+  function headerKey(col){
+    const h = col && col.querySelector ? col.querySelector('.vid-card-header') : null;
+    if(!h) return '';
+    return (h.textContent || '').trim().toLowerCase();
+  }
+
+  const panels = document.querySelectorAll('.hint-panel');
+  panels.forEach(panel => {
+    const wrap = panel.querySelector('.columns.is-variable.is-3') || panel.querySelector('.columns');
+    if(!wrap) return;
+    const cols = Array.from(wrap.children).filter(ch => ch && ch.classList && ch.classList.contains('column'));
+    if(cols.length !== 3) return;
+
+    const noCol = cols.find(c => headerKey(c) === 'no hint');
+    const textCol = cols.find(c => headerKey(c) === 'text hint');
+    const visualCol = cols.find(c => headerKey(c) === 'visual hint');
+    if(!noCol || !textCol || !visualCol) return;
+
+    // appendChild moves existing nodes; final order becomes: no -> text -> visual
+    [noCol, textCol, visualCol].forEach(c => wrap.appendChild(c));
+  });
+})();
+</script>
+
 <!-- ========== SECTION 3: MME-CoF-Pro BENCHMARK ========== -->
-<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-2 mathvista">MME-CoF-Pro Benchmark</h1></div></section>
+<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-4 mathvista">MME-CoF-Pro Benchmark</h1></div></section>
 
 <section class="section">
   <div class="container is-max-desktop">
@@ -390,7 +417,7 @@
   });
 })();
 </script>
-<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-2 mathvista">Visualization</h1><p style="margin:.65rem 0 0; font-size:.95rem; color:#666;"><b>Click to play the video</b></p></div></section>
+<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-4 mathvista">Visualization</h1><p style="margin:.65rem 0 0; font-size:.95rem; color:#666;"><i><b>Click to play the video</b></i></p></div></section>
 
 <section class="section">
   <div class="container" style="max-width:1200px;">
@@ -604,7 +631,7 @@
 </script>
 
 <!-- ========== SECTION 5: TAKEAWAYS ========== -->
-<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-2 mathvista">Takeaways</h1></div></section>
+<section class="hero is-light is-small"><div class="hero-body has-text-centered"><h1 class="title is-4 mathvista">Takeaways</h1></div></section>
 
 <section class="section">
   <div class="container" style="max-width:1100px;">
