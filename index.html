@@ -693,10 +693,89 @@
     <div class="takeaway-section">
       <h3 class="title is-4"><i>Takeaway 1: Reasoning Coherence shows no clear correlation with Generation Quality</i></h3>
       <p style="margin-bottom:1.2rem;">High generation quality does <b>not</b> guarantee reasoning coherence. Some models (e.g., Kling) produce visually stunning videos but fail to capture the correct reasoning. Conversely, lower-fidelity outputs can still answer the question correctly.</p>
-      <div class="columns is-variable is-4">
-        <div class="column is-6"><div class="vid-card"><div class="vid-card-header" style="background:#059669;"><span class="model-badge kling" style="padding:0">Kling-v2.1</span> — Beautiful but Wrong</div><div class="vid-card-media"><img src="static/images/videos/physics_based_reasoning/2_videos/generated_video_1.gif" alt="kling"/></div><div class="vid-card-body"><p>Q: Which numbered brick will the ball hit first?</p><div style="margin-top:.4rem;"><span class="score-tag score-gq">Gen Quality: 3.8/4</span><span class="score-tag score-low">Reasoning: 0.5/4</span></div><p style="font-size:.82rem; color:#666; margin-top:.3rem;">Visually smooth and high-fidelity, but the ball trajectory violates reflection physics.</p></div></div></div>
-        <div class="column is-6"><div class="vid-card"><div class="vid-card-header" style="background:#7c3aed;"><span class="model-badge veo3" style="padding:0">Veo-3</span> — Rough but Correct</div><div class="vid-card-media"><img src="static/images/videos/physics_based_reasoning/2_videos/generated_video_1.gif" alt="veo3"/></div><div class="vid-card-body"><p>Q: Which numbered brick will the ball hit first?</p><div style="margin-top:.4rem;"><span class="score-tag score-low">Gen Quality: 1.8/4</span><span class="score-tag score-rc">Reasoning: 3.2/4</span></div><p style="font-size:.82rem; color:#666; margin-top:.3rem;">Lower visual fidelity, but the ball correctly follows reflection rules.</p></div></div></div>
+      <div style="position:relative; max-width:980px; margin:0 auto; overflow:hidden;">
+        <button onclick="t1Go(-1)" style="position:absolute; top:50%; left:6px; transform:translateY(-50%); z-index:10; background:var(--pri); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:1.1rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center;"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="t1Go(1)" style="position:absolute; top:50%; right:6px; transform:translateY(-50%); z-index:10; background:var(--pri); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:1.1rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center;"><i class="fas fa-chevron-right"></i></button>
+        <div id="t1Track" style="display:flex; transition:transform .4s ease;">
+          <div style="min-width:100%; padding:1rem;">
+            <div class="columns is-variable is-4">
+              <div class="column is-6">
+                <div class="vid-card">
+                  <div class="vid-card-header" style="background:#059669;">
+                    <span class="model-badge kling" style="padding:0">Kling-v2.1</span> — Source: kling_1.mp4
+                  </div>
+                  <div class="vid-card-media"><img src="static/images/videos_gif/takeaway/1/kling_1.gif" alt="kling_1"/></div>
+                  <div class="vid-card-body">
+                    <div style="font-size:.82rem; color:#666; margin-top:.05rem; margin-bottom:.2rem;"><b>Prompt:</b> Gradually zoom in on the group of people walking along the path, centering on the person carrying the handbag. Keep the surrounding park and benches softly blurred to emphasize the handbag's color. Static shot.</div>
+                    <div style="font-size:.85rem; color:#666; margin-top:.15rem;">
+                      Compared with Veo 3.1 Fast, Kling-v2.1 generates a more realistic scene of wind blowing the trees, but it completely misses focus on the bag and its colors.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-6">
+                <div class="vid-card">
+                  <div class="vid-card-header" style="background:#7c3aed;">
+                    <span class="model-badge veo3" style="padding:0">Veo-3</span> — Source: veo_3.1_fast_1.mp4
+                  </div>
+                  <div class="vid-card-media"><img src="static/images/videos_gif/takeaway/1/veo_3.1_fast_1.gif" alt="veo_3.1_fast_1"/></div>
+                  <div class="vid-card-body">
+                    <div style="font-size:.82rem; color:#666; margin-top:.05rem; margin-bottom:.2rem;"><b>Prompt:</b> Gradually zoom in on the group of people walking along the path, centering on the person carrying the handbag. Keep the surrounding park and benches softly blurred to emphasize the handbag's color. Static shot.</div>
+                    <div style="font-size:.85rem; color:#666; margin-top:.15rem;">
+                      In contrast, Veo 3.1 Fast pays better attention to the bag and color details, but the wind-driven tree motion is less realistic.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="min-width:100%; padding:1rem;">
+            <div class="columns is-variable is-4">
+              <div class="column is-6">
+                <div class="vid-card">
+                  <div class="vid-card-header" style="background:#059669;">
+                    <span class="model-badge kling" style="padding:0">Kling-v2.1</span> — Source: kling_2.mp4
+                  </div>
+                  <div class="vid-card-media"><img src="static/images/videos_gif/takeaway/1/kling_2.gif" alt="kling_2"/></div>
+                  <div class="vid-card-body">
+                    <div style="font-size:.82rem; color:#666; margin-top:.05rem; margin-bottom:.2rem;"><b>Prompt:</b> Generate the cursor movement to click the camera shutter button. Keep the shot static and perform a single precise click without triggering unintended actions or altering other interface.</div>
+                    <div style="font-size:.85rem; color:#666; margin-top:.15rem;">
+                      Although Kling does a very good job in zooming the phone, it fails to perform the click action.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-6">
+                <div class="vid-card">
+                  <div class="vid-card-header" style="background:#2563eb;">
+                    <span class="model-badge sora2" style="padding:0">Sora-2</span> — Source: sora_2.mp4
+                  </div>
+                  <div class="vid-card-media"><img src="static/images/videos_gif/takeaway/1/sora_2.gif" alt="sora_2"/></div>
+                  <div class="vid-card-body">
+                    <div style="font-size:.82rem; color:#666; margin-top:.05rem; margin-bottom:.2rem;"><b>Prompt:</b> Generate the cursor movement to click the camera shutter button. Keep the shot static and perform a single precise click without triggering unintended actions or altering other interface.</div>
+                    <div style="font-size:.85rem; color:#666; margin-top:.15rem;">
+                      Kling-v2.1 generates video with more faithful metal material, but it does not lift the triangular prism.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <script>
+        (function(){
+          let t1Cur=0;
+          const t1Track=document.getElementById('t1Track');
+          if(!t1Track) return;
+          const t1Total=t1Track.children.length;
+          window.t1Go=function(dir){
+            t1Cur=(t1Cur+dir+t1Total)%t1Total;
+            t1Track.style.transform='translateX(-'+(t1Cur*100)+'%)';
+          };
+        })();
+      </script>
     </div>
 
     <div class="takeaway-section">
