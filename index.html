@@ -434,10 +434,7 @@
 <script>
 (function(){
   const VIS_PREFIX = "static/images/videos_gif/visualization/";
-  const VIS_THUMB_PREFIX = "static/images/videos_gif/visualization_thumbs/";
-
-  const TAKE_PREFIX = "static/images/videos_gif/takeaway/";
-  const TAKE_THUMB_PREFIX = "static/images/videos_gif/takeaway_thumbs/";
+  const THUMB_PREFIX = "static/images/videos_gif/visualization_thumbs/";
 
   const proto = HTMLImageElement && HTMLImageElement.prototype;
   if(!proto) return;
@@ -447,15 +444,9 @@
 
   function toThumb(gifUrl){
     if(typeof gifUrl !== "string") return null;
-    if(gifUrl.startsWith(VIS_PREFIX)){
-      const rel = gifUrl.slice(VIS_PREFIX.length).replace(/\.gif$/i, ".png");
-      return VIS_THUMB_PREFIX + rel;
-    }
-    if(gifUrl.startsWith(TAKE_PREFIX)){
-      const rel = gifUrl.slice(TAKE_PREFIX.length).replace(/\.gif$/i, ".png");
-      return TAKE_THUMB_PREFIX + rel;
-    }
-    return null;
+    if(!gifUrl.startsWith(VIS_PREFIX)) return null;
+    const rel = gifUrl.slice(VIS_PREFIX.length).replace(/\.gif$/i, ".png");
+    return THUMB_PREFIX + rel;
   }
 
   // Intercept only the initial gif assignment.
