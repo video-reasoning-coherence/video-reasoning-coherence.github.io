@@ -691,7 +691,7 @@
 <section class="section">
   <div class="container" style="max-width:1100px;">
     <div class="takeaway-section">
-      <h3 class="title is-4"><i>Takeaway 1: Reasoning Coherence vs. Generation Quality</i></h3>
+      <h3 class="title is-4"><i>Takeaway 1: Reasoning Coherence shows no clear correlation with Generation Quality</i></h3>
       <p style="margin-bottom:1.2rem;">High generation quality does <b>not</b> guarantee reasoning coherence. Some models (e.g., Kling) produce visually stunning videos but fail to capture the correct reasoning. Conversely, lower-fidelity outputs can still answer the question correctly.</p>
       <div class="columns is-variable is-4">
         <div class="column is-6"><div class="vid-card"><div class="vid-card-header" style="background:#059669;"><span class="model-badge kling" style="padding:0">Kling-v2.1</span> — Beautiful but Wrong</div><div class="vid-card-media"><img src="static/images/videos/physics_based_reasoning/2_videos/generated_video_1.gif" alt="kling"/></div><div class="vid-card-body"><p>Q: Which numbered brick will the ball hit first?</p><div style="margin-top:.4rem;"><span class="score-tag score-gq">Gen Quality: 3.8/4</span><span class="score-tag score-low">Reasoning: 0.5/4</span></div><p style="font-size:.82rem; color:#666; margin-top:.3rem;">Visually smooth and high-fidelity, but the ball trajectory violates reflection physics.</p></div></div></div>
@@ -700,8 +700,8 @@
     </div>
 
     <div class="takeaway-section">
-      <h3 class="title is-4"><i>Takeaway 2: Text Hint — Double-Edged Sword</i></h3>
-      <p style="margin-bottom:1.2rem;">Text hints with answer information can boost reasoning coherence in many cases, but may also introduce <b>hallucinations</b> when the model over-relies on the hint.</p>
+      <h3 class="title is-4"><i>Takeaway 2: Text Hint improves Reasoning Score but introduces hallucination</i></h3>
+      <p style="margin-bottom:1.2rem;">Text hints generally improve Reasoning Score, but consistently degrade Consistency Score and cause hallucination, suggesting that explicit guidance may shift model attention rather than enhance genuine understanding.</p>
       <div class="columns is-variable is-4">
         <div class="column is-6"><div class="vid-card"><div class="vid-card-header text-hint">Text Hint Helps ✓</div><div class="vid-card-media"><img src="static/images/videos/object_counting_reasoning/1_videos/generated_video_1.gif" alt="text helps"/></div><div class="vid-card-body"><p><b>Without hint:</b> Model counts 5 squares (wrong)</p><p><b>With text hint:</b> Model correctly highlights 8.</p><div style="margin-top:.3rem;"><span class="score-tag score-low">No Hint: 1.0/4</span><span class="score-tag score-rc">Text Hint: 3.5/4</span></div></div></div></div>
         <div class="column is-6"><div class="vid-card"><div class="vid-card-header" style="background:#dc2626;">Text Hint Hallucination ✗</div><div class="vid-card-media"><img src="static/images/videos/table_and_chart_reasoning/1_videos/generated_video_1.gif" alt="text hurts"/></div><div class="vid-card-body"><p><b>Without hint:</b> Model correctly zooms to row (score 2.5)</p><p><b>With text hint:</b> Model fabricates data values.</p><div style="margin-top:.3rem;"><span class="score-tag score-rc">No Hint: 2.5/4</span><span class="score-tag score-low">Text Hint: 0.8/4</span></div></div></div></div>
@@ -709,8 +709,8 @@
     </div>
 
     <div class="takeaway-section">
-      <h3 class="title is-4"><i>Takeaway 3: Visual Hint — Grounding Helps, Clutter Hurts</i></h3>
-      <p style="margin-bottom:1.2rem;">Visual hints generally improve spatial grounding, but in cluttered scenes they can confuse the model.</p>
+      <h3 class="title is-4"><i>Takeaway 3: Visual Hints help structued tasks but hurt fine-grained perception and induce hallucination</i></h3>
+      <p style="margin-bottom:1.2rem;">Visual hints are more effective for structured and spatially guided tasks but are less reliable for fine-grained visual tasks. They also introduce hallucinations by being mistakenly rendered as part of the scene.</p>
       <div class="columns is-variable is-4">
         <div class="column is-6"><div class="vid-card"><div class="vid-card-header visual-hint">Visual Hint Helps ✓</div><div class="vid-card-media"><img src="static/images/videos/real_world_spatial_reasoning/2_videos/generated_video_1.gif" alt="visual helps"/></div><div class="vid-card-body"><p><b>Without hint:</b> Model pans to wrong player</p><p><b>With visual hint:</b> Model correctly identifies spatial relation.</p><div style="margin-top:.3rem;"><span class="score-tag score-low">No Hint: 1.2/4</span><span class="score-tag score-rc">Visual Hint: 3.0/4</span></div></div></div></div>
         <div class="column is-6"><div class="vid-card"><div class="vid-card-header" style="background:#dc2626;">Visual Hint Distraction ✗</div><div class="vid-card-media"><img src="static/images/videos/visual_detail_reasoning/3_videos/generated_video_2.gif" alt="visual hurts"/></div><div class="vid-card-body"><p><b>Without hint:</b> Model correctly identifies motorcycle position</p><p><b>With visual hint:</b> Overlapping boxes mislead the model.</p><div style="margin-top:.3rem;"><span class="score-tag score-rc">No Hint: 2.8/4</span><span class="score-tag score-low">Visual Hint: 1.3/4</span></div></div></div></div>
